@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class StdUser implements User {
+public class StdUser implements User {
 
     @JsonProperty("user_id")
     public final String userId;
@@ -17,6 +17,11 @@ public final class StdUser implements User {
     private StdUser(final String userId) {
         this.userId = userId;
         this.attributes = new HashMap<>();
+    }
+
+    protected StdUser(final StdUser stdUser) {
+        this.userId = stdUser.userId;
+        this.attributes = stdUser.attributes;
     }
 
     @JsonCreator

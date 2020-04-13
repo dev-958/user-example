@@ -1,5 +1,7 @@
-package com.builder.userexample.domain;
+package com.builder.userexample.client;
 
+import com.builder.userexample.domain.StdUser;
+import com.builder.userexample.domain.User;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,15 +29,27 @@ public class UserWithRoles implements User {
     @JsonIgnore
     public final List<String> roles;
 
+    private static class Proxy extends StdUser {
+        public Proxy(final String userId, final Map<String, String> attributes) {
+            super(userId, attributes);
+        }
+        public Proxy(final StdUser stdUser) {
+            super(stdUser);
+        }
+        public Map<String, String> getAttributes() {
+            return super.attributes;
+        }
+    }
+
     @JsonCreator
     private UserWithRoles(@JsonProperty("userWithRoles") final StdUser userWithRoles) {
         this.userWithRoles = userWithRoles;
         this.userId = userWithRoles.userId;
-        this.roles = Collections.unmodifiableList(roleGen(userWithRoles.attributes));
+        this.roles = Collections.unmodifiableList(roleGen(new Proxy(userWithRoles).getAttributes()));
     }
 
     private UserWithRoles(final String userId, final Map<String, String> attributes) {
-        this.userWithRoles = new StdUser(userId, attributes);
+        this.userWithRoles = new Proxy(userId, attributes);
         this.userId = userId;
         this.roles = Collections.unmodifiableList(roleGen(attributes));
     }
