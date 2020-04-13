@@ -6,11 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.*;
 import java.util.AbstractMap.SimpleImmutableEntry;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -34,25 +31,23 @@ public class UserWithRoles implements User {
     private UserWithRoles(@JsonProperty("userWithRoles") final StdUser userWithRoles) {
         this.userWithRoles = userWithRoles;
         this.userId = userWithRoles.userId;
-        this.roles = Collections.unmodifiableList(Optional.ofNullable(this.userWithRoles.attributes.get(ROLE_KEY)).map(val -> {
-            try {
-                return mapper.readValue(val, List.class);
-            } catch (JsonProcessingException e) {
-                return Collections.emptyList();
-            }
-        }).orElseGet(Collections::emptyList));
+        this.roles = Collections.unmodifiableList(roleGen(userWithRoles.attributes));
     }
 
     private UserWithRoles(final String userId, final Map<String, String> attributes) {
         this.userWithRoles = new StdUser(userId, attributes);
         this.userId = userId;
-        this.roles = Collections.unmodifiableList(Optional.ofNullable(this.userWithRoles.attributes.get(ROLE_KEY)).map(val -> {
+        this.roles = Collections.unmodifiableList(roleGen(attributes));
+    }
+
+    private static List<String> roleGen(final Map<String, String> attributes) {
+        return Optional.ofNullable(attributes.get(ROLE_KEY)).map(val -> {
             try {
-                return mapper.readValue(val, List.class);
+                return mapper.readValue(val, mapper.getTypeFactory().constructCollectionType(List.class, String.class));
             } catch (JsonProcessingException e) {
-                return Collections.emptyList();
+                return new ArrayList<String>();
             }
-        }).orElseGet(Collections::emptyList));
+        }).orElseGet(ArrayList::new);
     }
 
     public static IRoles create(final String userId) {
