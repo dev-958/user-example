@@ -43,4 +43,18 @@ public class UserWithRolesTest {
         final UserWithRoles user = UserWithRoles.create("invalid-user").withRoles("LOUNGE-LIZARD");
     }
 
+    @Test
+    public void multiStagedMarshallTest() throws JsonProcessingException {
+        final UserWithRoles user = UserWithRoles.create("over-wire-user").withRoles("ADMIN");
+
+        final ObjectMapper mapper = new ObjectMapper();
+        final String userWithRoles = mapper.writeValueAsString(user.stdUser());
+
+        final StdUser stdUserIntermediary = mapper.readValue(userWithRoles, StdUser.class);
+
+        final UserWithRoles outputUser = UserWithRoles.create(stdUserIntermediary);
+
+        assertEquals("", "ADMIN", outputUser.roles.stream().findFirst().orElseGet(() -> "NOT-FOUND"));
+    }
+
 }

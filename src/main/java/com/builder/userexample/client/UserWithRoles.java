@@ -54,6 +54,10 @@ public class UserWithRoles implements User {
         this.roles = Collections.unmodifiableList(roleGen(attributes));
     }
 
+    public StdUser stdUser() {
+        return this.userWithRoles;
+    }
+
     private static List<String> roleGen(final Map<String, String> attributes) {
         return Optional.ofNullable(attributes.get(ROLE_KEY)).map(val -> {
             try {
@@ -70,6 +74,10 @@ public class UserWithRoles implements User {
                         .peek(role -> Optional.of(allowed.contains(role)).filter(val -> val).orElseThrow(() -> new RuntimeException("Invalid Role supplied")))
                         .collect(toList()))
                 )).collect(toMap(SimpleImmutableEntry::getKey, SimpleImmutableEntry::getValue)));
+    }
+
+    public static UserWithRoles create(final StdUser stdUser) {
+        return new UserWithRoles(stdUser);
     }
 
     public interface IRoles {
