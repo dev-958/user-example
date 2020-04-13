@@ -7,19 +7,22 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class is the holder for all data but only {@code userId} is public along with the static {@code create()} method.
+ */
 public class StdUser implements User {
 
     @JsonProperty("user_id")
     public final String userId;
     @JsonProperty("attributes")
-    protected final Map<String, String> attributes;
+    protected final Map<String, String> attributes; // must be protected
 
     private StdUser(final String userId) {
         this.userId = userId;
         this.attributes = new HashMap<>();
     }
 
-    protected StdUser(final StdUser stdUser) {
+    protected StdUser(final StdUser stdUser) { // must be protected
         this.userId = stdUser.userId;
         this.attributes = stdUser.attributes;
     }

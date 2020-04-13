@@ -43,6 +43,12 @@ public class UserWithRolesTest {
         final UserWithRoles user = UserWithRoles.create("invalid-user").withRoles("LOUNGE-LIZARD");
     }
 
+    /**
+     * Here I demonstrate how it can be used in a message based application where you create an instance of
+     * {@link UserWithRoles} and then pass it over the wire as a JSON {@link StdUser} which contains the additional
+     * metadata but does not expose it in the Java object instance. This allows easy forwarding, persistence and caching
+     * with eventual conversion into the source type.
+     */
     @Test
     public void multiStagedMarshallTest() throws JsonProcessingException {
         final UserWithRoles user = UserWithRoles.create("over-wire-user").withRoles("ADMIN");
@@ -54,7 +60,7 @@ public class UserWithRolesTest {
 
         final UserWithRoles outputUser = UserWithRoles.create(stdUserIntermediary);
 
-        assertEquals("", "ADMIN", outputUser.roles.stream().findFirst().orElseGet(() -> "NOT-FOUND"));
+        assertEquals("Staged conversion failed", "ADMIN", outputUser.roles.stream().findFirst().orElseGet(() -> "NOT-FOUND"));
     }
 
 }
