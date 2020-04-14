@@ -15,3 +15,5 @@ See unit tests and inline comments for details.
 
 Hierarchies should be kept shallow, implement ```User``` only. All data packed into
 the ```StdUser``` attributes collection.
+
+See Java 14 new feature, ```Record```: https://aboullaite.me/java-14-records/
