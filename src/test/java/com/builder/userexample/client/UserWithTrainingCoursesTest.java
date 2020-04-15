@@ -12,7 +12,9 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
 public class UserWithTrainingCoursesTest {
@@ -59,9 +61,9 @@ public class UserWithTrainingCoursesTest {
         final UserWithTrainingCompleted user = UserWithTrainingCompleted.create("over-wire-user").withTrainingCourses("COURSE1");
 
         final ObjectMapper mapper = new ObjectMapper();
-        final String userWithTrainingCompleted = mapper.writeValueAsString(user.stdUser());
+        final String userJson = mapper.writeValueAsString(user.stdUser());
 
-        final StdUser stdUserIntermediary = mapper.readValue(userWithTrainingCompleted, StdUser.class);
+        final StdUser stdUserIntermediary = mapper.readValue(userJson, StdUser.class);
 
         final UserWithTrainingCompleted outputUser = UserWithTrainingCompleted.create(stdUserIntermediary);
 
@@ -86,5 +88,40 @@ public class UserWithTrainingCoursesTest {
 
         // check that the user now has the trainingCompleted field populated
         assertEquals("Failed to get the training completed field", expectedTrainingCompleted, field.get(user));
+    }
+
+    @Test
+    public void toStringTest() throws JsonProcessingException {
+        final UserWithTrainingCompleted user = UserWithTrainingCompleted.create("test-user").withTrainingCourses("COURSE1");
+        assertEquals("ToString behaviour has been changed", "UserWithTrainingCompleted[userId='test-user', trainingCompleted=[COURSE1]]", user.toString());
+    }
+
+    @Test
+    public void equalsTestWithDifferentUserClasses() throws JsonProcessingException {
+        final UserWithTrainingCompleted user = UserWithTrainingCompleted.create("test-user").withTrainingCourses("COURSE1");
+        final StdUser stdUser = user.stdUser();
+        assertTrue("Equals no longer works for comparing UserWithTrainingCompleted class with a StdUser class", user.equals(stdUser));
+    }
+
+    @Test
+    public void identicalObjectEqualsTest() throws JsonProcessingException {
+        final UserWithTrainingCompleted user = UserWithTrainingCompleted.create("test-user").withTrainingCourses("COURSE1");
+        assertTrue("Equals behaviour no longer works when tested against the same object", user.equals(user));
+    }
+
+    @Test
+    public void sameClassAndContentsEqualsTest() throws JsonProcessingException {
+        final UserWithTrainingCompleted user1 = UserWithTrainingCompleted.create("test-user").withTrainingCourses("COURSE1");
+        final UserWithTrainingCompleted user2 = UserWithTrainingCompleted.create("test-user").withTrainingCourses("COURSE1");
+
+        assertTrue("Equals behaviour no longer works when tested against different objects but the same contents", user1.equals(user2));
+    }
+
+    @Test
+    public void sameClassDifferentContentsEqualsTest() throws JsonProcessingException {
+        final UserWithTrainingCompleted user1 = UserWithTrainingCompleted.create("a-user").withTrainingCourses("COURSE1");
+        final UserWithTrainingCompleted user2 = UserWithTrainingCompleted.create("different-user").withTrainingCourses("COURSE1");
+
+        assertFalse("Equals behaviour no longer works when tested against different objects with different contents", user1.equals(user2));
     }
 }

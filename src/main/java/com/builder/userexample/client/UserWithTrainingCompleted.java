@@ -12,6 +12,7 @@ import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -62,14 +63,14 @@ public class UserWithTrainingCompleted implements User {
     }
 
     private UserWithTrainingCompleted(final String userId, final Map<String, String> attributes) {
-        this.userWithTrainingCompleted = new com.builder.userexample.client.UserWithTrainingCompleted.Proxy(userId, attributes);
+        this.userWithTrainingCompleted = new Proxy(userId, attributes);
         this.userId = userId;
     }
 
     @JsonIgnore
     public List<String> getTrainingCompleted() {
         if (this.trainingCompleted == null) {
-            this.trainingCompleted = trainingCourseGen(new com.builder.userexample.client.UserWithTrainingCompleted.Proxy(userWithTrainingCompleted).getAttributes());
+            this.trainingCompleted = trainingCourseGen(new Proxy(userWithTrainingCompleted).getAttributes());
         }
         return this.trainingCompleted;
     }
@@ -97,8 +98,8 @@ public class UserWithTrainingCompleted implements User {
     /**
      * Static factory method
      */
-    public static com.builder.userexample.client.UserWithTrainingCompleted.ITrainingCourses create(final String userId) {
-        return trainingCourses -> new com.builder.userexample.client.UserWithTrainingCompleted(userId, Stream.of(new SimpleImmutableEntry<>(TRAINING_COURSE_KEY,
+    public static ITrainingCourses create(final String userId) {
+        return trainingCourses -> new UserWithTrainingCompleted(userId, Stream.of(new SimpleImmutableEntry<>(TRAINING_COURSE_KEY,
                 mapper.writeValueAsString(Stream.of(trainingCourses)
                         .peek(course -> Optional.of(allowed.contains(course)).filter(val -> val).orElseThrow(() -> new RuntimeException("Invalid training course supplied")))
                         .collect(toList()))
@@ -113,7 +114,35 @@ public class UserWithTrainingCompleted implements User {
     }
 
     public interface ITrainingCourses {
-        com.builder.userexample.client.UserWithTrainingCompleted withTrainingCourses(String... trainingCourses) throws JsonProcessingException;
+        UserWithTrainingCompleted withTrainingCourses(String... trainingCourses) throws JsonProcessingException;
     }
 
+    public boolean equals(final Object object) {
+        if (this == object) {
+            return true;
+        }
+
+        if (object.getClass() != UserWithTrainingCompleted.class) {
+            if (object instanceof StdUser) {
+                return equals(UserWithTrainingCompleted.create((StdUser) object));
+            } else {
+                return false;
+            }
+        }
+
+        final UserWithTrainingCompleted that = (UserWithTrainingCompleted) object;
+        return userId.equals(that.userId) &&
+                java.util.Objects.equals(getTrainingCompleted(), that.getTrainingCompleted()); //needs to use getter method because of the lazy instanciation of this field
+    }
+
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), userId, getTrainingCompleted()); //needs to use getter method for the training completed because of the lazy instanciation of this field
+    }
+
+    public java.lang.String toString() {
+        return new java.util.StringJoiner(", ", UserWithTrainingCompleted.class.getSimpleName() + "[", "]")
+                .add("userId='" + userId + "'")
+                .add("trainingCompleted=" + getTrainingCompleted()) //needs to use getter method because of the lazy instanciation of this field
+                .toString();
+    }
 }
