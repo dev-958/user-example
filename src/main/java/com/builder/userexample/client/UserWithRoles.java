@@ -63,8 +63,9 @@ public class UserWithRoles implements User {
 
     /**
      * Grants access to the contained {@link StdUser} as a conversion utility
+     * This needs to be a public method to enable marshalling between services
      */
-    protected StdUser stdUser() {
+    public StdUser stdUser() {
         return this.userWithRoles;
     }
 
