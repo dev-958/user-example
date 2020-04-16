@@ -1,5 +1,6 @@
-package com.builder.userexample.client;
+package com.builder.userexample.domain;
 
+import com.builder.userexample.client.UserWithRoles;
 import com.builder.userexample.domain.StdUser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
