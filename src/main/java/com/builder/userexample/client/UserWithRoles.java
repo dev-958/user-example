@@ -64,7 +64,7 @@ public class UserWithRoles implements User {
     /**
      * Grants access to the contained {@link StdUser} as a conversion utility
      */
-    public StdUser stdUser() {
+    protected StdUser stdUser() {
         return this.userWithRoles;
     }
 
