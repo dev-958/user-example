@@ -18,7 +18,7 @@
     <properties>
         <java.version>11</java.version>
         <mockito.core>3.3.3</mockito.core>
-        <junit.version>4.13</junit.version>
+        <junit.version>4.13.1</junit.version>
     </properties>
 
     <dependencies>
